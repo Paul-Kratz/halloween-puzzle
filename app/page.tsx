@@ -8,6 +8,8 @@ import { Creepster } from "next/font/google";
 const CORRECT_CODE = "123456";
 const STORAGE_KEY = "halloween-unlocked";
 const TOMBSTONE_STORAGE_KEY = "halloween-tombstone-clicked";
+const assetPath = (path: string) =>
+  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
 
 const creepster = Creepster({
   weight: "400",
@@ -52,17 +54,20 @@ export default function Home() {
   };
 
   return (
-    <main className={`scene ${creepster.className}`}>
+    <main
+      className={`scene ${creepster.className}`}
+      style={{ backgroundImage: `url(${assetPath("/background.webp")})` }}
+    >
       <Image
         className="ghost ghostLeft"
-        src="/ghost.png"
+        src={assetPath("/ghost.png")}
         alt=""
         width={100}
         height={100}
       />
       <Image
         className="ghost ghostRight"
-        src="/ghost.png"
+        src={assetPath("/ghost.png")}
         alt=""
         width={100}
         height={100}
@@ -70,7 +75,7 @@ export default function Home() {
 
       <Image
         className="ghost ghostRightTop"
-        src="/ghost.png"
+        src={assetPath("/ghost.png")}
         alt=""
         width={100}
         height={100}
@@ -105,7 +110,7 @@ export default function Home() {
         >
           <Image
             className="tombstoneImage"
-            src="/tombstone.png"
+            src={assetPath("/tombstone.png")}
             alt=""
             width={600}
             height={399}
