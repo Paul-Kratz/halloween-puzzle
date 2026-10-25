@@ -1,0 +1,163 @@
+.scene {
+  position: relative;
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  overflow: hidden;
+  padding: 2rem 1.25rem;
+  background: #e94f18 url("/background.webp") 78% center / cover no-repeat;
+}
+
+.puzzle {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 28rem);
+  text-align: center;
+}
+
+.puzzle h1 {
+  margin: 0 0 1rem;
+  color: #fff7ed;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  line-height: 1;
+  text-shadow: 0 2px 8px rgb(25 15 8 / 70%);
+}
+
+.unlockForm {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.unlockForm input,
+.unlockForm button,
+.hint {
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.unlockForm input {
+  border: 2px solid #fb923c;
+  background: rgb(255 247 237 / 92%);
+  color: #7c2d12;
+}
+
+.unlockForm button {
+  border: 2px solid #fdba74;
+  background: #9a3412;
+  color: #fff7ed;
+  cursor: pointer;
+}
+
+.hint {
+  margin: 0;
+  background: rgb(25 15 8 / 82%);
+  color: #fde68a;
+}
+
+.ghost {
+  position: absolute;
+  left: -7rem;
+  z-index: 1;
+  width: clamp(4rem, 9vw, 6.5rem);
+  height: auto;
+  pointer-events: none;
+  animation:
+    ghostTravel 18s linear infinite,
+    ghostBob 2s ease-in-out infinite alternate;
+}
+
+.ghostLeft {
+  top: 30%;
+  animation-delay: 0s, 0s;
+}
+
+.ghostRight {
+  top: 20%;
+  animation-delay:
+    -6s,
+    -1s;
+}
+
+.ghostRightTop {
+  top: 10%;
+  animation-delay: -3s, 2s;
+}
+
+.tombstoneArea {
+  position: absolute;
+  left: clamp(0.5rem, 2vw, 2rem);
+  bottom: 0;
+  z-index: 3;
+  width: clamp(9rem, 22vw, 18rem);
+}
+
+.tombstones {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+.tombstoneImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tombstonesGlow {
+  animation: tombstoneGlow 2.8s ease-in-out infinite;
+}
+
+.tombstoneHint {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.75rem);
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 1rem));
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgb(251 191 36 / 75%);
+  border-radius: 0.5rem;
+  background: rgb(25 15 8 / 88%);
+  color: #fde68a;
+  font-weight: 700;
+  text-align: center;
+}
+
+@keyframes ghostBob {
+  to {
+    transform: translateY(-1rem);
+  }
+}
+
+@keyframes ghostTravel {
+  to {
+    left: calc(100% + 2rem);
+  }
+}
+
+@keyframes tombstoneGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0.15rem rgb(255 214 153 / 35%));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 0.7rem rgb(255 214 153 / 90%));
+  }
+}
+
+@media (min-width: 48rem) {
+  .scene {
+    background-position: center;
+  }
+}
