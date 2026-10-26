@@ -1,7 +1,7 @@
 .scene {
   position: relative;
   display: grid;
-  min-height: 100dvh;
+  min-height: 100svh;
   place-items: center;
   overflow: hidden;
   padding: 2rem 1.25rem;
@@ -26,6 +26,7 @@
 .unlockForm {
   display: grid;
   gap: 0.75rem;
+  touch-action: manipulation;
 }
 
 .unlockForm input,
@@ -115,22 +116,6 @@
 
 .tombstonesGlow {
   animation: tombstoneGlow 2.8s ease-in-out infinite;
-}
-
-.tombstoneHint {
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 0.75rem);
-  width: max-content;
-  max-width: min(16rem, calc(100vw - 1rem));
-  margin: 0;
-  padding: 0.65rem 0.85rem;
-  border: 1px solid rgb(251 191 36 / 75%);
-  border-radius: 0.5rem;
-  background: rgb(25 15 8 / 88%);
-  color: #fde68a;
-  font-weight: 700;
-  text-align: center;
 }
 
 @keyframes ghostBob {

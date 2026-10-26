@@ -2,12 +2,14 @@
 
 import "./main.css";
 import Image from "next/image";
-import { type FormEvent, useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { Creepster } from "next/font/google";
 
 const CORRECT_CODE = "123456";
 const STORAGE_KEY = "halloween-unlocked";
+const UNLOCKED_AT_STORAGE_KEY = "halloween-unlocked-at";
 const TOMBSTONE_STORAGE_KEY = "halloween-tombstone-clicked";
+const GLOW_DELAY_MS = 30_000;
 const assetPath = (path: string) =>
   `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
 
@@ -17,31 +19,49 @@ const creepster = Creepster({
 
 export default function Home() {
   const [code, setCode] = useState("");
-  const [unlocked, setUnlocked] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.localStorage.getItem(STORAGE_KEY) === "true",
-  );
+  const [unlocked, setUnlocked] = useState(false);
   const [showGlow, setShowGlow] = useState(false);
-  const [tombstoneClicked, setTombstoneClicked] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.localStorage.getItem(TOMBSTONE_STORAGE_KEY) === "true",
-  );
+  const [tombstoneClicked, setTombstoneClicked] = useState(false);
+  const [unlockedAt, setUnlockedAt] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!unlocked) return;
+    startTransition(() => {
+      const isUnlocked = window.localStorage.getItem(STORAGE_KEY) === "true";
+      const storedUnlockTime = window.localStorage.getItem(
+        UNLOCKED_AT_STORAGE_KEY,
+      );
+      const savedUnlockTime = Number(storedUnlockTime);
+      const hasStoredUnlockTime =
+        storedUnlockTime !== null && Number.isFinite(savedUnlockTime);
+      const unlockTime = hasStoredUnlockTime ? savedUnlockTime : Date.now();
 
-    const glowTimer = window.setTimeout(() => setShowGlow(true), 15_000);
+      if (isUnlocked && !hasStoredUnlockTime) {
+        window.localStorage.setItem(UNLOCKED_AT_STORAGE_KEY, `${unlockTime}`);
+      }
+
+      setUnlocked(isUnlocked);
+      setUnlockedAt(isUnlocked ? unlockTime : null);
+      setTombstoneClicked(
+        window.localStorage.getItem(TOMBSTONE_STORAGE_KEY) === "true",
+      );
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!unlockedAt) return;
+
+    const delay = Math.max(0, unlockedAt + GLOW_DELAY_MS - Date.now());
+    const glowTimer = window.setTimeout(() => setShowGlow(true), delay);
     return () => window.clearTimeout(glowTimer);
-  }, [unlocked]);
+  }, [unlockedAt]);
 
-  const handleUnlock = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleUnlock = () => {
     if (code === CORRECT_CODE) {
+      const unlockTime = Date.now();
       window.localStorage.setItem(STORAGE_KEY, "true");
+      window.localStorage.setItem(UNLOCKED_AT_STORAGE_KEY, `${unlockTime}`);
       setUnlocked(true);
+      setUnlockedAt(unlockTime);
     }
   };
 
@@ -64,6 +84,7 @@ export default function Home() {
         alt=""
         width={100}
         height={100}
+        loading="eager"
       />
       <Image
         className="ghost ghostRight"
@@ -71,6 +92,7 @@ export default function Home() {
         alt=""
         width={100}
         height={100}
+        loading="eager"
       />
 
       <Image
@@ -79,24 +101,39 @@ export default function Home() {
         alt=""
         width={100}
         height={100}
+        loading="eager"
       />
 
       <section className="puzzle">
         <h1>Happy Halloween</h1>
         {unlocked ? (
-          <p className="hint">Find me</p>
+          <p className="hint">
+            {tombstoneClicked ? "Final hint goes here." : "Find me"}
+          </p>
         ) : (
-          <form className="unlockForm" onSubmit={handleUnlock}>
+          <div className="unlockForm">
             <input
               type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              autoComplete="one-time-code"
+              enterKeyHint="done"
+              spellCheck={false}
               aria-label="Enter the code"
               placeholder="Enter the code"
               value={code}
               onChange={(event) => setCode(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  handleUnlock();
+                }
+              }}
             />
-            <button type="submit">Unlock</button>
-          </form>
+            <button type="button" onClick={handleUnlock}>
+              Unlock
+            </button>
+          </div>
         )}
       </section>
 
@@ -115,11 +152,9 @@ export default function Home() {
             width={600}
             height={399}
             sizes="(max-width: 640px) 45vw, 22vw"
+            loading="lazy"
           />
         </button>
-        {tombstoneClicked && (
-          <p className="tombstoneHint">Final hint goes here.</p>
-        )}
       </div>
     </main>
   );
