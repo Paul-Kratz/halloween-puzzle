@@ -18,7 +18,7 @@
 .puzzle h1 {
   margin: 0 0 1rem;
   color: #fff7ed;
-  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-size: clamp(2.5rem, 6vw, 4rem);
   line-height: 1;
   text-shadow: 0 2px 8px rgb(25 15 8 / 70%);
 }
@@ -37,7 +37,7 @@
   border-radius: 0.5rem;
   padding: 0.85rem 1rem;
   font: inherit;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
 }

@@ -5,11 +5,11 @@ import Image from "next/image";
 import { startTransition, useEffect, useState } from "react";
 import { Creepster } from "next/font/google";
 
-const CORRECT_CODE = "123456";
+const CORRECT_CODE = "526874";
 const STORAGE_KEY = "halloween-unlocked";
 const UNLOCKED_AT_STORAGE_KEY = "halloween-unlocked-at";
 const TOMBSTONE_STORAGE_KEY = "halloween-tombstone-clicked";
-const GLOW_DELAY_MS = 30_000;
+const GLOW_DELAY_MS = 60_000;
 const assetPath = (path: string) =>
   `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
 
@@ -108,7 +108,9 @@ export default function Home() {
         <h1>Happy Halloween</h1>
         {unlocked ? (
           <p className="hint">
-            {tombstoneClicked ? "Final hint goes here." : "Find me"}
+            {tombstoneClicked
+              ? "Thank you for playing! Please find your reward in the post 📮."
+              : "otay oceedpray inway ethay uzzlepay, easeplay indfay ouryay ermangay osthay."}
           </p>
         ) : (
           <div className="unlockForm">
@@ -143,7 +145,7 @@ export default function Home() {
           className={showGlow ? "tombstones tombstonesGlow" : "tombstones"}
           aria-label="Inspect the tombstone"
           aria-pressed={tombstoneClicked}
-          onClick={handleTombstoneClick}
+          onDoubleClick={handleTombstoneClick}
         >
           <Image
             className="tombstoneImage"
