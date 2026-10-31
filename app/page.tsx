@@ -2,8 +2,8 @@
 
 import "./main.css";
 import Image from "next/image";
-import { startTransition, useEffect, useState } from "react";
-import { Creepster } from "next/font/google";
+import { startTransition, useEffect, useRef, useState } from "react";
+import { Grenze_Gotisch } from "next/font/google";
 
 const CORRECT_CODE = "526874";
 const STORAGE_KEY = "halloween-unlocked";
@@ -13,8 +13,8 @@ const GLOW_DELAY_MS = 60_000;
 const assetPath = (path: string) =>
   `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
 
-const creepster = Creepster({
-  weight: "400",
+const grenzeGotish = Grenze_Gotisch({
+  weight: ["100", "400"],
 });
 
 export default function Home() {
@@ -55,6 +55,18 @@ export default function Home() {
     return () => window.clearTimeout(glowTimer);
   }, [unlockedAt]);
 
+  const lastTap = useRef(0);
+
+  const handleTap = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const now = event.timeStamp;
+
+    if (now - lastTap.current < 350) {
+      handleTombstoneClick();
+      lastTap.current = 0;
+    } else {
+      lastTap.current = now;
+    }
+  };
   const handleUnlock = () => {
     if (code === CORRECT_CODE) {
       const unlockTime = Date.now();
@@ -75,7 +87,7 @@ export default function Home() {
 
   return (
     <main
-      className={`scene ${creepster.className}`}
+      className={`scene ${grenzeGotish.className}`}
       style={{ backgroundImage: `url(${assetPath("/background.webp")})` }}
     >
       <Image
@@ -107,10 +119,14 @@ export default function Home() {
       <section className="puzzle">
         <h1>Happy Halloween</h1>
         {unlocked ? (
-          <p className="hint">
-            {tombstoneClicked
-              ? "Thank you for playing! Please find your reward in the post 📮."
-              : "otay oceedpray inway ethay uzzlepay, easeplay indfay ouryay ermangay osthay."}
+          <p className={`hint ${tombstoneClicked ? "" : "upside-down"}`}>
+            {tombstoneClicked ? (
+              "Thank you for playing! Please find your reward in the post 📮."
+            ) : (
+              <span>
+                Find your local <span className="little-text">G</span>host
+              </span>
+            )}
           </p>
         ) : (
           <div className="unlockForm">
@@ -145,7 +161,7 @@ export default function Home() {
           className={showGlow ? "tombstones tombstonesGlow" : "tombstones"}
           aria-label="Inspect the tombstone"
           aria-pressed={tombstoneClicked}
-          onDoubleClick={handleTombstoneClick}
+          onClick={handleTap}
         >
           <Image
             className="tombstoneImage"
